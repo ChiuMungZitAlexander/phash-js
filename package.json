@@ -1,0 +1,12 @@
+{
+  "name": "phash-js",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@9.12.3",
+  "engines": {
+    "node": "^20"
+  }
+}
