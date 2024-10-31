@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { dct1d, dct2d } from "../dct";
+import { dct1d, dct2d, binarize } from "..";
 
 test("dct1d should transform sequence correctly", () => {
   const input = [255, 255, 255, 0, 0, 0, 255, 255];
@@ -69,4 +69,20 @@ test("dct1d should transform matrix correctly", () => {
   expect(dct2d(input)).toStrictEqual(
     output.map((_row) => _row.map((_n) => expect.closeTo(_n, 4)))
   );
+});
+
+test("binarize should transform matrix correctly", () => {
+  const input = [
+    [75, 42, 42, 32],
+    [84, 67, 4, 76],
+    [42, 45, 67, 13],
+    [98, 38, 18, 8],
+  ];
+  const ouput = [
+    [1, 0, 0, 0],
+    [1, 1, 0, 1],
+    [0, 0, 1, 0],
+    [1, 0, 0, 0],
+  ];
+  expect(binarize(input)).toStrictEqual(ouput);
 });
