@@ -7,7 +7,7 @@
   "license": "MIT",
   "packageManager": "pnpm@9.12.3",
   "engines": {
-    "node": "^20"
+    "node": "^22.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.8.5",
