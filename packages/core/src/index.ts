@@ -63,10 +63,8 @@ export const dct2d = (matrix: number[][], precision = 8) => {
  * @param matrix
  * @returns
  */
-export const croppedDct2d = (
-  matrix: number[][],
-  size = DEFAULT_SAMPLING_SIZE
-) => subset(matrix, index(range(0, size), range(0, size)));
+export const cropDct2d = (matrix: number[][], size = DEFAULT_SAMPLING_SIZE) =>
+  subset(matrix, index(range(0, size), range(0, size)));
 
 /**
  * To convert a DCT matrix to only 01 matrix.
