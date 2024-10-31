@@ -1,0 +1,16 @@
+{
+  "name": "@phash-js/server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@phash-js/core": "workspace:*",
+    "sharp": "^0.33.5"
+  }
+}

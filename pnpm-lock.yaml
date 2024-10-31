@@ -17,6 +17,11 @@ importers:
       typescript:
         specifier: ^5.6.3
         version: 5.6.3
+      vitest:
+        specifier: ^2.1.4
+        version: 2.1.4(@types/node@22.8.5)
+
+  packages/client: {}
 
   packages/core:
     dependencies:
@@ -36,9 +41,6 @@ importers:
       rollup:
         specifier: ^4.24.3
         version: 4.24.3
-      vitest:
-        specifier: ^2.1.4
-        version: 2.1.4(@types/node@22.8.5)
 
   packages/server:
     dependencies:
@@ -48,9 +50,6 @@ importers:
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
-      sharp-phash:
-        specifier: ^2.1.0
-        version: 2.1.0(sharp@0.33.5)
 
 packages:
 
@@ -807,12 +806,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  sharp-phash@2.1.0:
-    resolution: {integrity: sha512-9JYWr4tiKpjRA5Mi0qHn6LP2evS+GjdRVGjDFOSnO761m5Pavkpm83SyzauO2Ntt7znVqTn7J3XTUwHjRPAonw==}
-    engines: {node: '>= 10'}
-    peerDependencies:
-      sharp: '>= 0.25.4'
-
   sharp@0.33.5:
     resolution: {integrity: sha512-haPVm1EkS9pgvHrQ/F3Xy+hgcuMV0Wm9vfIBSiwZ05k+xgb0PkBQpGsAA/oWdDobNaZTH5ppvHtzCFbnSEwHVw==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
@@ -1531,10 +1524,6 @@ snapshots:
   seedrandom@3.0.5: {}
 
   semver@7.6.3: {}
-
-  sharp-phash@2.1.0(sharp@0.33.5):
-    dependencies:
-      sharp: 0.33.5
 
   sharp@0.33.5:
     dependencies:
