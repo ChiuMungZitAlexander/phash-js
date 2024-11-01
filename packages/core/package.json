@@ -13,16 +13,11 @@
   ],
   "scripts": {
     "test": "vitest",
+    "prebuild": "pnpm clean",
     "build": "rollup -c && tsc -p tsconfig.build.json",
     "clean": "rm -rf ./dist"
   },
   "dependencies": {
     "mathjs": "^13.2.0"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-typescript": "^12.1.1",
-    "rollup": "^4.24.3"
   }
 }
