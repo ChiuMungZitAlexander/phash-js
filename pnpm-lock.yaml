@@ -47,9 +47,16 @@ importers:
       '@phash-js/core':
         specifier: workspace:*
         version: link:../core
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.13
+        version: 4.17.13
 
 packages:
 
@@ -583,6 +590,9 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
+  '@types/lodash@4.17.13':
+    resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
+
   '@types/node@22.8.5':
     resolution: {integrity: sha512-5iYk6AMPtsMbkZqCO1UGF9W5L38twq11S2pYWkybGHH2ogPUvXWNlQqJBzuEZWKj/WRH+QTeiv6ySWqJtvIEgA==}
 
@@ -742,6 +752,9 @@ packages:
 
   javascript-natural-sort@0.7.1:
     resolution: {integrity: sha512-nO6jcEfZWQXDhOiBtG2KvKyEptz7RVbpGP4vTD2hLBdmNQSsCiicO2Ioinv6UI4y9ukqnBpy+XZ9H6uLNgJTlw==}
+
+  lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
   loupe@3.1.2:
     resolution: {integrity: sha512-23I4pFZHmAemUnz8WZXbYRSKYj801VDaNv9ETuMh7IrMc7VuVVSo+Z9iLE3ni30+U48iDWfi30d3twAXBYmnCg==}
@@ -1261,6 +1274,8 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
+  '@types/lodash@4.17.13': {}
+
   '@types/node@22.8.5':
     dependencies:
       undici-types: 6.19.8
@@ -1448,6 +1463,8 @@ snapshots:
       '@types/estree': 1.0.6
 
   javascript-natural-sort@0.7.1: {}
+
+  lodash@4.17.21: {}
 
   loupe@3.1.2: {}
 

@@ -4,13 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@phash-js/core": "workspace:*",
+    "lodash": "^4.17.21",
     "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.13"
   }
 }
