@@ -13,7 +13,16 @@ import {
   max,
 } from "mathjs";
 
-const DEFAULT_SAMPLING_SIZE = 8; // The default size for sample the top left values after DCT
+// Before DCT, the image should be reduced in size. Usually 32*32 is an ideal size.
+export const DEFAULT_REDUCED_SIZE = 32;
+
+// After DCT and binarization, we will have a long binary string like 0101010111...
+// To make it hexadecimal, every 4 digits will be converted.
+// For example, 0011110101011111 will be 0011,1101,0101,1111 and then 3d5f
+export const BIN_GROUP_SIZE = 4;
+
+// The default size for sample the top left values after DCT.
+const DEFAULT_SAMPLING_SIZE = 8;
 
 /**
  * DCT 1d
@@ -67,7 +76,7 @@ export const cropDct2d = (matrix: number[][], size = DEFAULT_SAMPLING_SIZE) =>
   subset(matrix, index(range(0, size), range(0, size)));
 
 /**
- * To convert a DCT matrix to only 01 matrix.
+ * To convert a DCT matrix to binary matrix.
  * If element is larger than matrix average, it is 1, otherwise 0.
  * @param matrix
  * @returns
@@ -92,3 +101,45 @@ export const normalize = (matrix: number[][]): number[][] => {
     row.map((value) => ((value - minVal) / (maxVal - minVal)) * 255)
   );
 };
+
+/**
+ * Calculate the hamming distance
+ * @param a
+ * @param b
+ * @returns
+ */
+export const calcDistance = (a: string, b: string): number => {
+  if (a.length !== b.length) {
+    throw new Error("Strings must be of the same length");
+  }
+
+  if (!/^[0-9a-fA-F]+$/.test(`${a}${b}`)) {
+    throw new Error("Strings must be hexadecimal");
+  }
+
+  const [binA, binB] = [phashToBin(a), phashToBin(b)];
+
+  let distance = 0;
+
+  for (let i = 0; i < binA.length; i++) {
+    if (binA[i] !== binB[i]) {
+      distance++;
+    }
+  }
+
+  return distance;
+};
+
+/**
+ * Convert phash to bin with pad zeros
+ * @param phash
+ * @returns
+ */
+function phashToBin(phash: string) {
+  return phash
+    .split("")
+    .map((_hex) =>
+      Number(`0x${_hex}`).toString(2).padStart(BIN_GROUP_SIZE, "0")
+    )
+    .join("");
+}

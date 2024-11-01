@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { dct1d, dct2d, binarize } from "..";
+import { dct1d, dct2d, binarize, calcDistance } from "./";
 
 test("dct1d should transform sequence correctly", () => {
   const input = [255, 255, 255, 0, 0, 0, 255, 255];
@@ -85,4 +85,16 @@ test("binarize should transform matrix correctly", () => {
     [1, 0, 0, 0],
   ];
   expect(binarize(input)).toStrictEqual(ouput);
+});
+
+test("calcDistance should return hamming distance correctly", () => {
+  const input = "DA5B827B";
+  const ouput = "1A5A0A7A";
+
+  const distance = calcDistance(input, ouput);
+
+  expect(distance).toEqual(6);
+
+  expect(() => calcDistance(input, ouput.slice(0, 7))).toThrowError();
+  expect(() => calcDistance(input, "abcdefgh")).toThrowError();
 });
