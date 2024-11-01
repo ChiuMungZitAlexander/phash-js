@@ -1,11 +1,15 @@
 import sharp from "sharp";
 import chunk from "lodash/chunk";
-import { dct2d, cropDct2d, binarize, calcDistance } from "@phash-js/core";
+import {
+  dct2d,
+  cropDct2d,
+  binarize,
+  calcDistance,
+  DEFAULT_REDUCED_SIZE,
+  BIN_GROUP_SIZE,
+} from "@phash-js/core";
 
 type imageType = string | Buffer | ArrayBuffer;
-
-const DEFAULT_REDUCED_SIZE = 32;
-const BIN_GROUP_SIZE = 4;
 
 const phash = async (image: imageType) => {
   try {

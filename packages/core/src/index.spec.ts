@@ -93,7 +93,7 @@ test("calcDistance should return hamming distance correctly", () => {
 
   const distance = calcDistance(input, ouput);
 
-  expect(distance).toEqual(6);
+  expect(distance).toBe(6);
 
   expect(() => calcDistance(input, ouput.slice(0, 7))).toThrowError();
   expect(() => calcDistance(input, "abcdefgh")).toThrowError();
