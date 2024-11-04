@@ -9,6 +9,7 @@
     "dist"
   ],
   "scripts": {
+    "dev": "tsx",
     "test": "vitest",
     "prebuild": "pnpm clean",
     "build": "rollup -c && tsc -p tsconfig.build.json",

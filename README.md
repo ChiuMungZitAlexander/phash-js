@@ -6,6 +6,17 @@
 
 There are several popular image hashing techniques, including `aHash` (average hash), `dHash` (difference hash), and `pHash` (perceptual hash). While `aHash` and `dHash` are simpler, they may fail to detect subtle differences in more complex images. `pHash` is a more advanced algorithm that leverages perceptual hashing to capture the overall appearance of an image by focusing on features that human eyes are sensitive to. This makes it more robust for comparing images that may vary slightly due to scaling, cropping, or minor alterations.
 
+## Process
+
+![process](process.png "process")
+
+1. Reduce the image to 32\*32 pixels, taking into account both complexity and quality
+2. Grayscale image
+3. Apply DCT 2d
+4. It is the best way to binarize the whole 32\*32 pixels. But to make calculation efficient, we pick top-left 8*8 pixels, which are with high frequencies.
+5. Calculate the average of the matrix, and then turn the pixel, of which the value greater than average, to 1, otherwise 0. Finally we will get such a binary string `1001100111000100010101000010010100000000001000111010001010000000`
+6. Convert binary to hex each 4 digits as a group. E.g., `1001` to `9`, `1100` to `c`. The phash of the original image will be `99c454250023a280`.
+
 ## Discrete Cosine Transform (DCT)
 
 At the core of the `pHash` algorithm is the Discrete Cosine Transform (DCT), a mathematical operation that transforms an image into its frequency domain. By extracting and compressing frequency components, DCT enables `pHash` to create a unique, fixed-length hash representing the perceptual content of an image. This hash is resilient to small changes, making it effective for image comparison.
@@ -62,7 +73,7 @@ import { /* dct1d */, dct2d, /* binarize */, normalize } from "@phash-js/core";
 import sharp from "sharp";
 
 // Do the dct2d for a image
-const matrix = await dct2d("./image.png");
+const matrix = await dct2d(matrix as number[][]);
 
 // As the value can be larger than 255 or negative after DCT, normalize the matrix to make it greyscale.
 const normalizedMatrix = normalize(matrix);
