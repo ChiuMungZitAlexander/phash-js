@@ -1,19 +1,38 @@
 import {
-  // dct2d,
-  // cropDct2d,
-  // binarize,
+  dct2d,
+  cropDct2d,
+  binarize,
   calcDistance,
   DEFAULT_REDUCED_SIZE,
-  // BIN_GROUP_SIZE,
+  BIN_GROUP_SIZE,
 } from "@phash-js/core";
+import chunk from "lodash/chunk";
 
-const phash = async (imageUrl: string) => {
+/**
+ *
+ * @param file
+ * @returns
+ */
+const loadImage = async (file: File): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(img.src);
+      resolve(img);
+    };
+
+    img.onerror = reject;
+  });
+
+/**
+ * @phash-js/client
+ * @param imageFile
+ * @returns
+ */
+const phash = async (imageFile: File): Promise<string> => {
   try {
-    const image = new Image();
-    image.src = imageUrl;
-
-    await new Promise((resolve) => (image.onload = resolve));
-
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
@@ -21,26 +40,40 @@ const phash = async (imageUrl: string) => {
       throw new Error("Canvas context is null");
     }
 
-    // greyscale
-    ctx.filter = "grayscale(1)";
+    const image = await loadImage(imageFile);
 
-    // Reduce image size
     ctx.drawImage(image, 0, 0, DEFAULT_REDUCED_SIZE, DEFAULT_REDUCED_SIZE);
 
-    // Convert canvas to Blob for buffer-like data
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve)
+    const imageData = ctx.getImageData(
+      0,
+      0,
+      DEFAULT_REDUCED_SIZE,
+      DEFAULT_REDUCED_SIZE
     );
-
-    if (!blob) {
-      throw new Error("Blob is null when converting canvas to blob");
+    const pixelArray = imageData.data;
+    const grayscaleArray = new Uint8Array(
+      DEFAULT_REDUCED_SIZE * DEFAULT_REDUCED_SIZE
+    );
+    for (let i = 0; i < pixelArray.length; i += 4) {
+      // rec.601 standard
+      // Luminance=0.299×Red+0.587×Green+0.114×Blue
+      grayscaleArray[i / 4] = Math.sqrt(
+        0.299 * pixelArray[i] * pixelArray[i] +
+          0.587 * pixelArray[i + 1] * pixelArray[i + 1] +
+          0.114 * pixelArray[i + 2] * pixelArray[i + 2]
+      );
     }
 
-    const arrayBuffer = await blob.arrayBuffer();
+    const imageDataMatrix = chunk(grayscaleArray, DEFAULT_REDUCED_SIZE);
+    const imageBinMatrix = binarize(cropDct2d(dct2d(imageDataMatrix)));
 
-    console.log("-->", new Uint8Array(arrayBuffer));
+    const hash = chunk(imageBinMatrix.flat(), BIN_GROUP_SIZE)
+      .map((_chunk) => parseInt(_chunk.join(""), 2).toString(16))
+      .join("");
+
+    return hash;
   } catch (err) {
-    console.error(err);
+    throw new Error(`Error in processing phash, ${(err as Error)?.message}`);
   }
 };
 
