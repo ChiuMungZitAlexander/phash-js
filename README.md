@@ -13,7 +13,7 @@ There are several popular image hashing techniques, including `aHash` (average h
 1. Reduce the image to 32\*32 pixels, taking into account both complexity and quality
 2. Grayscale image
 3. Apply DCT 2d
-4. It is the best way to binarize the whole 32\*32 pixels. But to make calculation efficient, we pick top-left 8*8 pixels, which are with high frequencies.
+4. It is the best way to binarize the whole 32\*32 pixels. But to make calculation efficient, we pick top-left 8\*8 pixels, which are with high frequencies.
 5. Calculate the average of the matrix, and then turn the pixel, of which the value greater than average, to 1, otherwise 0. Finally we will get such a binary string `1001100111000100010101000010010100000000001000111010001010000000`
 6. Convert binary to hex each 4 digits as a group. E.g., `1001` to `9`, `1100` to `c`. The phash of the original image will be `99c454250023a280`.
 
@@ -35,13 +35,15 @@ Existing `pHash` libraries are primarily written in JavaScript, but `phash-js` i
 
 ## Examples
 
+### For node environments
+
+In node environment, `@phash-js/server` will use sharp to convert images to RGBA data.
+
 ```bash
 npm install @phash-js/server
 # yarn install @phash-js/server
 # pnpm install @phash-js/server
 ```
-
-### For node environments
 
 ```typescript
 import { phash, calcDistance } from "@phash-js/server";
@@ -56,7 +58,27 @@ const distance = calcDistance(hash1, hash2);
 
 ### For browser environments
 
-Work in progress...
+In node environment, `@phash-js/client` will use canvas to convert images to RGBA data.
+
+```bash
+npm install @phash-js/client
+# yarn install @phash-js/client
+# pnpm install @phash-js/client
+```
+
+```typescript
+const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const _hash = await phash(file);
+      return _hash;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+```
 
 ### Use core module directly
 
@@ -91,3 +113,7 @@ await sharp(flatData, {
   },
 }).toFormat("png").toFile('./image.png');
 ```
+
+## Known Issues
+
+1. Hash by `@phash-js/server` and `@phash-js/clinet` will be a little different as sharp and canvas have various conversion algorithms. For the example of Lenna.png, `@phash-js/server` will return `99c454250023a280`, while `@phash-js/client` will return `99c4542540238280`. Therefore, it's not supported to mix `@phash-js/server` and `@phash-js/client`.
