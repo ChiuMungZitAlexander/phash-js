@@ -11,6 +11,11 @@ import {
 
 type imageType = string | Buffer | ArrayBuffer;
 
+/**
+ * @phash-js/server
+ * @param image
+ * @returns
+ */
 const phash = async (image: imageType) => {
   try {
     const { data } = await sharp(image)
