@@ -53,7 +53,7 @@ importers:
     dependencies:
       mathjs:
         specifier: ^13.2.0
-        version: 13.2.0
+        version: 13.2.1
 
   packages/example/react:
     dependencies:
@@ -113,8 +113,8 @@ packages:
     resolution: {integrity: sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==}
     engines: {node: '>=6.9.0'}
 
-  '@bundled-es-modules/cookie@2.0.0':
-    resolution: {integrity: sha512-Or6YHg/kamKHpxULAdSqhGqnWFneIXu1NKvvfBBzKGwpVsYuFIQ5aBPHDnnoR3ghW1nvSkALd+EF9iMtY7Vjxw==}
+  '@bundled-es-modules/cookie@2.0.1':
+    resolution: {integrity: sha512-8o+5fRPLNbjbdGRRmJj3h6Hh1AQJf2dk3qQ/5ZFb+PXkRNiSoMGGUKlsgLfrxneb72axVJyIYji64E2+nNfYyw==}
 
   '@bundled-es-modules/statuses@1.0.1':
     resolution: {integrity: sha512-yn7BklA5acgcBr+7w064fGV+SGIFySjCKpqjcWgBAIfrAkY+4GQTJJHQMeT3V/sgz23VTEVV8TtOmkvJAhFVfg==}
@@ -547,8 +547,8 @@ packages:
   '@module-federation/webpack-bundler-runtime@0.5.1':
     resolution: {integrity: sha512-mMhRFH0k2VjwHt3Jol9JkUsmI/4XlrAoBG3E0o7HoyoPYv1UFOWyqAflfANcUPgbYpvqmyLzDcO+3IT36LXnrA==}
 
-  '@mswjs/interceptors@0.36.7':
-    resolution: {integrity: sha512-sdx02Wlus5hv6Bx7uUDb25gb0WGjCuSgnJB2LVERemoSGuqkZMe3QI6nEXhieFGtYwPrZbYrT2vPbsFN2XfbUw==}
+  '@mswjs/interceptors@0.36.10':
+    resolution: {integrity: sha512-GXrJgakgJW3DWKueebkvtYgGKkxA7s0u5B0P5syJM5rvQUnrpLPigvci8Hukl7yEM+sU06l+er2Fgvx/gmiRgg==}
     engines: {node: '>=18'}
 
   '@open-draft/deferred-promise@2.2.0':
@@ -929,11 +929,11 @@ packages:
   commondir@1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
 
-  complex.js@2.4.0:
-    resolution: {integrity: sha512-PhTrCnB5SLBicgCtDmKzM0d8YmubCKhpAkrYn7Rk73Pc4m2P61K972QZ+aS3LRETMoBq/ng1UepwC52EN3wC8g==}
+  complex.js@2.4.2:
+    resolution: {integrity: sha512-qtx7HRhPGSCBtGiST4/WGHuW+zeaND/6Ld+db6PbrulIB1i2Ev/2UPiqcmpQNPSyfBKraC0EOvOKCB5dGZKt3g==}
 
-  cookie@0.5.0:
-    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
+  cookie@0.7.2:
+    resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
 
   core-js@3.38.1:
@@ -1098,8 +1098,8 @@ packages:
   magic-string@0.30.12:
     resolution: {integrity: sha512-Ea8I3sQMVXr8JhN4z+H/d8zwo+tYDgHE9+5G4Wnrwhs0gaK9fXTKx0Tw5Xwsd/bCPTTZNRAdpyzvoeORe9LYpw==}
 
-  mathjs@13.2.0:
-    resolution: {integrity: sha512-P5PZoiUX2Tkghkv3tsSqlK0B9My/ErKapv1j6wdxd0MOrYQ30cnGE4LH/kzYB2gA5rN46Njqc4cFgJjaxgijoQ==}
+  mathjs@13.2.1:
+    resolution: {integrity: sha512-HEKNV0hckO5Y4uY/KHucmQMMiXgdNUXfJ+SkExRJHLlD3f7mt4DZMJzndQOoTp/dX8ROwk4zl2xO+iq49OEliQ==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -1468,9 +1468,9 @@ snapshots:
     dependencies:
       regenerator-runtime: 0.14.1
 
-  '@bundled-es-modules/cookie@2.0.0':
+  '@bundled-es-modules/cookie@2.0.1':
     dependencies:
-      cookie: 0.5.0
+      cookie: 0.7.2
     optional: true
 
   '@bundled-es-modules/statuses@1.0.1':
@@ -1753,7 +1753,7 @@ snapshots:
       '@module-federation/runtime': 0.5.1
       '@module-federation/sdk': 0.5.1
 
-  '@mswjs/interceptors@0.36.7':
+  '@mswjs/interceptors@0.36.10':
     dependencies:
       '@open-draft/deferred-promise': 2.2.0
       '@open-draft/logger': 0.3.0
@@ -2131,9 +2131,9 @@ snapshots:
 
   commondir@1.0.1: {}
 
-  complex.js@2.4.0: {}
+  complex.js@2.4.2: {}
 
-  cookie@0.5.0:
+  cookie@0.7.2:
     optional: true
 
   core-js@3.38.1: {}
@@ -2304,10 +2304,10 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  mathjs@13.2.0:
+  mathjs@13.2.1:
     dependencies:
       '@babel/runtime': 7.26.0
-      complex.js: 2.4.0
+      complex.js: 2.4.2
       decimal.js: 10.4.3
       escape-latex: 1.2.0
       fraction.js: 4.3.7
@@ -2323,11 +2323,11 @@ snapshots:
 
   msw@2.6.0(@types/node@22.8.5)(typescript@5.6.3):
     dependencies:
-      '@bundled-es-modules/cookie': 2.0.0
+      '@bundled-es-modules/cookie': 2.0.1
       '@bundled-es-modules/statuses': 1.0.1
       '@bundled-es-modules/tough-cookie': 0.1.6
       '@inquirer/confirm': 5.0.1(@types/node@22.8.5)
-      '@mswjs/interceptors': 0.36.7
+      '@mswjs/interceptors': 0.36.10
       '@open-draft/deferred-promise': 2.2.0
       '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
