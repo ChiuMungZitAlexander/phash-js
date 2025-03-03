@@ -47,7 +47,7 @@ importers:
     devDependencies:
       '@types/lodash':
         specifier: ^4.17.13
-        version: 4.17.13
+        version: 4.17.16
 
   packages/core:
     dependencies:
@@ -97,7 +97,7 @@ importers:
     devDependencies:
       '@types/lodash':
         specifier: ^4.17.13
-        version: 4.17.13
+        version: 4.17.16
 
 packages:
 
@@ -654,8 +654,8 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
-  '@types/lodash@4.17.13':
-    resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
+  '@types/lodash@4.17.16':
+    resolution: {integrity: sha512-HX7Em5NYQAXKW+1T+FiuG27NGwzJfCX3s1GjOa7ujxZa52kjJLOr4FUxT+giF6Tgxv1e+/czV/iTtBw27WTU9g==}
 
   '@types/node@22.13.8':
     resolution: {integrity: sha512-G3EfaZS+iOGYWLLRCEAXdWK9my08oHNZ+FHluRiggIYJPOXzhOiDgpVCUHaUvyIC5/fj7C/p637jdzC666AOKQ==}
@@ -1673,7 +1673,7 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
-  '@types/lodash@4.17.13': {}
+  '@types/lodash@4.17.16': {}
 
   '@types/node@22.13.8':
     dependencies:
