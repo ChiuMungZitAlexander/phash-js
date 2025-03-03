@@ -81,7 +81,7 @@ importers:
         version: 18.3.1
       typescript:
         specifier: ^5.6.3
-        version: 5.6.3
+        version: 5.8.2
 
   packages/server:
     dependencies:
@@ -1126,11 +1126,6 @@ packages:
   typed-function@4.2.1:
     resolution: {integrity: sha512-EGjWssW7Tsk4DGfE+5yluuljS1OGYWiI1J6e8puZz9nTMM51Oug8CD5Zo4gWMsOhq5BI+1bF+rWTm4Vbj3ivRA==}
     engines: {node: '>= 18'}
-
-  typescript@5.6.3:
-    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
 
   typescript@5.8.2:
     resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
@@ -2186,8 +2181,6 @@ snapshots:
     optional: true
 
   typed-function@4.2.1: {}
-
-  typescript@5.6.3: {}
 
   typescript@5.8.2: {}
 
