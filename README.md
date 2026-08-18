@@ -1,3 +1,5 @@
+
+
 # phash-js
 
 `phash-js` is a TypeScript library for generating perceptual hashes (pHash) of images, allowing efficient and fast image comparison. This library is ideal for checking if a user’s avatar is among existing images in your database, making it easy to quickly identify similar images based on their perceptual characteristics.
@@ -116,4 +118,4 @@ await sharp(flatData, {
 
 ## Known Issues
 
-1. Hash by `@phash-js/server` and `@phash-js/clinet` will be a little different as sharp and canvas have various conversion algorithms. For the example of Lenna.png, `@phash-js/server` will return `99c454250023a280`, while `@phash-js/client` will return `99c4542540238280`. Therefore, it's not supported to mix `@phash-js/server` and `@phash-js/client`.
+1. Hash by `@phash-js/server` and `@phash-js/client` will be a little different as sharp and canvas have various conversion algorithms. For the example of Lenna.png, `@phash-js/server` will return `99c454250023a280`, while `@phash-js/client` will return `99c4542540238280`. Therefore, it's not supported to mix `@phash-js/server` and `@phash-js/client`.
