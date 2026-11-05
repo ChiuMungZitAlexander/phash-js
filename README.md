@@ -42,7 +42,7 @@ In node environment, `@phash-js/server` will use sharp to convert images to RGBA
 ```bash
 npm install @phash-js/server
 # yarn install @phash-js/server
-# pnpm install @phash-js/server
+# bun add @phash-js/server
 ```
 
 ```typescript
@@ -63,7 +63,7 @@ In node environment, `@phash-js/client` will use canvas to convert images to RGB
 ```bash
 npm install @phash-js/client
 # yarn install @phash-js/client
-# pnpm install @phash-js/client
+# bun add @phash-js/client
 ```
 
 ```typescript
@@ -87,7 +87,7 @@ Both `@phash-js/server` and `@phash-js/client` rely on `@phash-js/core`. If you 
 ```bash
 npm install @phash-js/core
 # yarn install @phash-js/core
-# pnpm install @phash-js/core
+# bun add @phash-js/core
 ```
 
 ```typescript
@@ -117,3 +117,18 @@ await sharp(flatData, {
 ## Known Issues
 
 1. Hash by `@phash-js/server` and `@phash-js/clinet` will be a little different as sharp and canvas have various conversion algorithms. For the example of Lenna.png, `@phash-js/server` will return `99c454250023a280`, while `@phash-js/client` will return `99c4542540238280`. Therefore, it's not supported to mix `@phash-js/server` and `@phash-js/client`.
+
+## Development
+
+Use Bun 1.4.4 or newer and Node.js 22.12 or newer. Install dependencies from the workspace root with `bun install --frozen-lockfile`.
+
+```sh
+bun run build
+bun run build:example
+bun run check
+bun run test
+```
+
+Commits use Conventional Commits, for example `fix(core): handle invalid images`. Husky runs Oxlint and Oxfmt before each commit and commitlint validates the commit message. Use `bun run format` and `bun run lint:fix` to apply fixes.
+
+`bun run deps:check` compares every direct dependency with the npm latest stable release; `bun run deps:update` updates the manifests, then run `bun install` to refresh `bun.lock`.

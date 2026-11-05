@@ -1,23 +1,52 @@
 {
   "name": "phash-js",
   "version": "1.0.0",
+  "private": true,
   "description": "",
   "keywords": [],
-  "author": "",
   "license": "MIT",
-  "packageManager": "pnpm@10.5.2",
-  "engines": {
-    "node": "^22"
+  "author": "",
+  "workspaces": [
+    "packages/core",
+    "packages/server",
+    "packages/client",
+    "packages/example/react"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "bun run --cwd packages/core build && bun run --cwd packages/server build && bun run --cwd packages/client build",
+    "build:example": "bun run --cwd packages/example/react build",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --deny-warnings .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "check": "bun run lint && bun run format:check && bun run typecheck",
+    "commitlint": "commitlint",
+    "prepare": "husky",
+    "deps:update": "bun scripts/update-dependencies.mjs",
+    "deps:check": "bun scripts/update-dependencies.mjs --check"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.2",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-typescript": "^12.1.2",
-    "@types/node": "^22.13.8",
-    "rollup": "^4.34.9",
-    "tslib": "^2.8.1",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.7"
-  }
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@types/node": "^26.6.6",
+    "husky": "^9.1.7",
+    "oxc-transform": "^0.157.0",
+    "oxfmt": "^0.76.0",
+    "oxlint": "^1.91.0",
+    "rollup": "^4.67.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
+  },
+  "engines": {
+    "bun": ">=1.4.4",
+    "node": ">=22.12.0"
+  },
+  "packageManager": "bun@1.4.4"
 }

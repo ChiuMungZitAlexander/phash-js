@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import chunk from "lodash/chunk";
+import chunk from "lodash/chunk.js";
 import {
   dct2d,
   cropDct2d,

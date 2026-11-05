@@ -6,7 +6,7 @@ import {
   DEFAULT_REDUCED_SIZE,
   BIN_GROUP_SIZE,
 } from "@phash-js/core";
-import chunk from "lodash/chunk";
+import chunk from "lodash/chunk.js";
 
 /**
  *
@@ -44,23 +44,16 @@ const phash = async (imageFile: File): Promise<string> => {
 
     ctx.drawImage(image, 0, 0, DEFAULT_REDUCED_SIZE, DEFAULT_REDUCED_SIZE);
 
-    const imageData = ctx.getImageData(
-      0,
-      0,
-      DEFAULT_REDUCED_SIZE,
-      DEFAULT_REDUCED_SIZE
-    );
+    const imageData = ctx.getImageData(0, 0, DEFAULT_REDUCED_SIZE, DEFAULT_REDUCED_SIZE);
     const pixelArray = imageData.data;
-    const grayscaleArray = new Uint8Array(
-      DEFAULT_REDUCED_SIZE * DEFAULT_REDUCED_SIZE
-    );
+    const grayscaleArray = new Uint8Array(DEFAULT_REDUCED_SIZE * DEFAULT_REDUCED_SIZE);
     for (let i = 0; i < pixelArray.length; i += 4) {
       // rec.601 standard
       // Luminance=0.299×Red+0.587×Green+0.114×Blue
       grayscaleArray[i / 4] = Math.sqrt(
         0.299 * pixelArray[i] * pixelArray[i] +
           0.587 * pixelArray[i + 1] * pixelArray[i + 1] +
-          0.114 * pixelArray[i + 2] * pixelArray[i + 2]
+          0.114 * pixelArray[i + 2] * pixelArray[i + 2],
       );
     }
 
