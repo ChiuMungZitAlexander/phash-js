@@ -29,7 +29,8 @@
     "commitlint": "commitlint",
     "prepare": "husky",
     "deps:update": "bun scripts/update-dependencies.mjs",
-    "deps:check": "bun scripts/update-dependencies.mjs --check"
+    "deps:check": "bun scripts/update-dependencies.mjs --check",
+    "test:browser": "playwright test"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
