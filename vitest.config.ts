@@ -1,28 +1,16 @@
-import { resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
+import inlineWasm from "./scripts/inline-wasm.mjs";
 
-const root = fileURLToPath(new URL(".", import.meta.url));
 export default defineConfig({
+  plugins: [inlineWasm()],
   test: {
-    projects: [
-      {
-        test: {
-          name: "core",
-          root: resolve(root, "packages/core"),
-          environment: "node",
-          include: ["src/**/*.spec.ts"],
-        },
-      },
-      {
-        resolve: { alias: { "@phash-js/core": resolve(root, "packages/core/src/index.ts") } },
-        test: {
-          name: "server",
-          root: resolve(root, "packages/server"),
-          environment: "node",
-          include: ["src/**/*.spec.ts"],
-        },
-      },
-    ],
+    environment: "node",
+    include: ["packages/{core,client,server}/src/**/*.spec.ts"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      include: ["packages/{core,client,server}/src/**/*.ts"],
+      exclude: ["**/*.spec.ts", "**/*.d.ts"],
+    },
   },
 });

@@ -1,43 +1,16 @@
-import sharp from "sharp";
-import chunk from "lodash/chunk.js";
-import {
-  dct2d,
-  cropDct2d,
-  binarize,
-  calcDistance,
-  DEFAULT_REDUCED_SIZE,
-  BIN_GROUP_SIZE,
-} from "@phash-js/core";
+import { readFile } from "node:fs/promises";
+import { hashImage } from "@phash-js/core";
 
-type imageType = string | Buffer | ArrayBuffer;
+export { calcDistance, HASH_PROFILE } from "@phash-js/core";
 
-/**
- * @phash-js/server
- * @param image
- * @returns
- */
-const phash = async (image: imageType) => {
-  try {
-    const { data } = await sharp(image)
-      .resize({
-        height: DEFAULT_REDUCED_SIZE,
-        width: DEFAULT_REDUCED_SIZE,
-      })
-      .grayscale()
-      .raw()
-      .toBuffer({ resolveWithObject: true });
+export type ImageInput = string | Uint8Array | ArrayBuffer;
 
-    const imageDataMatrix = chunk(Array.from(data), DEFAULT_REDUCED_SIZE);
-    const imageBinMatrix = binarize(cropDct2d(dct2d(imageDataMatrix)));
-
-    const hash = chunk(imageBinMatrix.flat(), BIN_GROUP_SIZE)
-      .map((_chunk) => parseInt(_chunk.join(""), 2).toString(16))
-      .join("");
-
-    return hash;
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-export { phash, calcDistance };
+/** Hash a file path or encoded PNG/JPEG/WebP bytes with the shared v2 codec. */
+export async function phash(image: ImageInput): Promise<string> {
+  let bytes: Uint8Array;
+  if (typeof image === "string") bytes = await readFile(image);
+  else if (image instanceof ArrayBuffer) bytes = new Uint8Array(image);
+  else if (image instanceof Uint8Array) bytes = image;
+  else throw new TypeError("Expected a file path, Uint8Array, Buffer, or ArrayBuffer");
+  return hashImage(bytes);
+}

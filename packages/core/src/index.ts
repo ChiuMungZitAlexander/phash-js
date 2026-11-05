@@ -1,4 +1,16 @@
 import { sqrt, sum, cos, pi, round, transpose, subset, index, range, mean, min, max } from "mathjs";
+import { decodeImage } from "./decode.js";
+import { hashCosine } from "./dct-basis.js";
+import { preprocessImage, type RgbaImage } from "./image.js";
+
+export { decodeImage } from "./decode.js";
+export {
+  HASH_PROFILE,
+  MAX_IMAGE_PIXELS,
+  orientImage,
+  preprocessImage,
+  type RgbaImage,
+} from "./image.js";
 
 // Before DCT, the image should be reduced in size. Usually 32*32 is an ideal size.
 export const DEFAULT_REDUCED_SIZE = 32;
@@ -22,9 +34,20 @@ export const dct1d = (sequence: number[], precision = 8) => {
 
   const result = sequence.map((_, i) => {
     const sigma = sum(
-      i === 0 ? sequence : sequence.map((_k, _i) => _k * cos((pi / n) * (_i + 1 / 2) * i)),
+      i === 0
+        ? sequence
+        : sequence.map(
+            (_k, _i) =>
+              _k *
+              (n === DEFAULT_REDUCED_SIZE ? hashCosine(_i, i) : cos((pi / n) * (_i + 1 / 2) * i)),
+          ),
     );
-    const multiplier = sqrt((i === 0 ? 1 : 2) / n) as number;
+    const multiplier =
+      n === DEFAULT_REDUCED_SIZE
+        ? i === 0
+          ? 0.1767766952966369
+          : 0.25
+        : (sqrt((i === 0 ? 1 : 2) / n) as number);
 
     return multiplier * sigma;
   });
@@ -71,6 +94,21 @@ export const binarize = (matrix: number[][]): number[][] => {
 
   return matrix.map((row) => row.map((value) => (value >= average ? 1 : 0)));
 };
+
+/** Hash unpremultiplied RGBA using the canonical phash-v2 profile. */
+export function hashRgbaImage(image: RgbaImage): string {
+  const bits = binarize(cropDct2d(dct2d(preprocessImage(image)))).flat();
+  let hash = "";
+  for (let i = 0; i < bits.length; i += BIN_GROUP_SIZE) {
+    hash += parseInt(bits.slice(i, i + BIN_GROUP_SIZE).join(""), 2).toString(16);
+  }
+  return hash;
+}
+
+/** Decode PNG/JPEG/WebP bytes and compute their canonical 64-bit hash. */
+export async function hashImage(bytes: Uint8Array): Promise<string> {
+  return hashRgbaImage(await decodeImage(bytes));
+}
 
 /**
  * Occasionally if you want to preview the greyscale image after DCT,

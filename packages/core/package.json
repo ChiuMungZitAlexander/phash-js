@@ -1,6 +1,6 @@
 {
   "name": "@phash-js/core",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "keywords": [],
   "license": "MIT",
@@ -31,6 +31,10 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@jsquash/webp": "1.5.0",
+    "fast-png": "8.0.0",
+    "fflate": "0.8.3",
+    "jpeg-js": "0.4.4",
     "mathjs": "15.2.0"
   }
 }

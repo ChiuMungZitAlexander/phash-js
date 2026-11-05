@@ -1,6 +1,6 @@
 {
   "name": "@phash-js/server",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "keywords": [],
   "license": "MIT",
@@ -31,11 +31,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@phash-js/core": "workspace:*",
-    "lodash": "^4.18.1",
-    "sharp": "^0.35.5"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.17.27"
+    "@phash-js/core": "workspace:*"
   }
 }
