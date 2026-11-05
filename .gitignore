@@ -326,3 +326,9 @@ scripts/cache
 .sentryclirc
 
 **/scripts/data/*
+
+# Test output
+coverage/
+test-results/
+playwright-report/
+blob-report/

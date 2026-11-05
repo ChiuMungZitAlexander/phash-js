@@ -28,7 +28,8 @@
   "scripts": {
     "build": "bun run clean && rollup -c && tsc -p tsconfig.build.json && node ../../scripts/copy-declarations.mjs",
     "clean": "node ../../scripts/clean.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:browser": "bun run --cwd ../.. test:browser"
   },
   "dependencies": {
     "@phash-js/core": "workspace:*"

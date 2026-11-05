@@ -83,14 +83,25 @@ bun install --frozen-lockfile
 bun run build
 bun run test
 bun run test:package
+bun run test:browser
 bun run typecheck
 bun run lint
 bun run format:check
 bun run build:example
 ```
 
+Before the first browser test run, install Playwright's Chromium, Firefox, and WebKit:
+
+```sh
+bun run playwright install chromium firefox webkit
+```
+
+On Linux, add `--with-deps` to install the required system libraries.
+
 `bun run format` applies Oxfmt formatting. Oxlint checks code correctness and style. Husky runs the configured checks before commits, and commitlint enforces Conventional Commits, for example:
 
 ```text
 fix(core): make image hashes deterministic across runtimes
 ```
+
+GitHub Actions checks formatting, lint, types, builds, unit tests, browser parity, and pull-request commit messages. Dependencies are installed from `bun.lock` with `--frozen-lockfile`.
