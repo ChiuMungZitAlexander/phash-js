@@ -1,85 +1,65 @@
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
+import { phash, calcDistance, HASH_PROFILE } from "./index.js";
 
-import { phash, calcDistance } from "./";
+const fixture = (name: string) => fileURLToPath(new URL("../images/" + name, import.meta.url));
 
-const image = (name: string) => fileURLToPath(new URL(`../images/${name}`, import.meta.url));
+describe("server phash", () => {
+  test("identifies the canonical hash profile", () => {
+    expect(HASH_PROFILE).toBe("phash-v2");
+  });
 
-test("phash should turn image to hex string", async () => {
-  const hash = await phash(image("lenna.png"));
+  test("hashes a path, Buffer, typed-array view, and ArrayBuffer identically", async () => {
+    const bytes = await readFile(fixture("lenna.png"));
+    const padded = new Uint8Array(bytes.length + 16);
+    padded.set(bytes, 7);
+    const view = padded.subarray(7, 7 + bytes.length);
+    const hashes = await Promise.all([
+      phash(fixture("lenna.png")),
+      phash(bytes),
+      phash(view),
+      phash(view.slice().buffer),
+    ]);
+    expect(hashes[0]).toBe("99c4142500238280");
+    expect(new Set(hashes).size).toBe(1);
+  });
 
-  expect(hash).toMatch(/^[0-9a-fA-F]{16}$/);
-});
+  test("is stable across repeated calls", async () => {
+    const bytes = await readFile(fixture("lenna.png"));
+    expect(await phash(bytes)).toBe(await phash(bytes));
+  });
 
-test("The same image should have the same fingerprint", async () => {
-  const hash1 = await phash(image("lenna.png"));
-  const hash2 = await phash(image("lenna.png"));
+  test("keeps the resized and watermarked fixtures close", async () => {
+    const original = await phash(fixture("lenna.png"));
+    const smaller = await phash(fixture("lenna_small_size.png"));
+    const watermark = await phash(fixture("lenna_watermark.png"));
+    expect(calcDistance(original, smaller)).toBeLessThanOrEqual(4);
+    expect(calcDistance(original, watermark)).toBeLessThanOrEqual(4);
+  });
 
-  expect(hash1).toBeTruthy();
-  expect(hash2).toBeTruthy();
+  test("distinguishes the altered and flipped fixtures", async () => {
+    const original = await phash(fixture("lenna.png"));
+    expect(calcDistance(original, await phash(fixture("lenna_old.png")))).toBeGreaterThan(5);
+    expect(calcDistance(original, await phash(fixture("lenna_flipped.png")))).toBeGreaterThan(5);
+  });
 
-  const distance = calcDistance(hash1 as string, hash2 as string);
+  test("decodes the existing WebP fixtures with the shared WASM codec", async () => {
+    const [a, b] = await Promise.all([
+      phash(fixture("ppg-2717.webp")),
+      phash(fixture("ppg-2920.webp")),
+    ]);
+    expect(a).toMatch(/^[0-9a-f]{16}$/);
+    expect(b).toMatch(/^[0-9a-f]{16}$/);
+    expect(calcDistance(a, b)).toBeGreaterThan(5);
+  });
 
-  expect(distance).toBe(0);
-});
-
-test("The same images with different sizes should have the same fingerprint", async () => {
-  const hash1 = await phash(image("lenna.png"));
-  const hash2 = await phash(image("lenna_small_size.png"));
-
-  expect(hash1).toBeTruthy();
-  expect(hash2).toBeTruthy();
-
-  const distance = calcDistance(hash1 as string, hash2 as string);
-
-  expect(distance).toBe(0);
-});
-
-test("Original image's fingerprint should have very short distance with a watermark one", async () => {
-  const hash1 = await phash(image("lenna.png"));
-  const hash2 = await phash(image("lenna_watermark.png"));
-
-  expect(hash1).toBeTruthy();
-  expect(hash2).toBeTruthy();
-
-  const distance = calcDistance(hash1 as string, hash2 as string);
-
-  // Sharp 0.35/libvips changes this fixture by two bits out of 64.
-  expect(distance).toBeLessThanOrEqual(2);
-});
-
-test("Similar images should have a intermediate distance", async () => {
-  const hash1 = await phash(image("lenna.png"));
-  const hash2 = await phash(image("lenna_old.png"));
-
-  expect(hash1).toBeTruthy();
-  expect(hash2).toBeTruthy();
-
-  const distance = calcDistance(hash1 as string, hash2 as string);
-
-  expect(distance).toBeGreaterThan(5);
-});
-
-test("Flipped images should have a long distance", async () => {
-  const hash1 = await phash(image("lenna.png"));
-  const hash2 = await phash(image("lenna_flipped.png"));
-
-  expect(hash1).toBeTruthy();
-  expect(hash2).toBeTruthy();
-
-  const distance = calcDistance(hash1 as string, hash2 as string);
-
-  expect(distance).toBeGreaterThan(5);
-});
-
-test("Even similar NFTs should have a long distance", async () => {
-  const hash1 = await phash(image("ppg-2717.webp"));
-  const hash2 = await phash(image("ppg-2920.webp"));
-
-  expect(hash1).toBeTruthy();
-  expect(hash2).toBeTruthy();
-
-  const distance = calcDistance(hash1 as string, hash2 as string);
-
-  expect(distance).toBeGreaterThan(5);
+  test("rejects errors instead of swallowing them and returning undefined", async () => {
+    await expect(phash(fixture("missing.png"))).rejects.toThrow();
+    await expect(phash(new Uint8Array())).rejects.toThrow("Invalid image data");
+    await expect(phash(new TextEncoder().encode("GIF89a unsupported"))).rejects.toThrow(
+      "Unsupported image format",
+    );
+    await expect(phash(123 as never)).rejects.toThrow("Expected a file path");
+  });
 });

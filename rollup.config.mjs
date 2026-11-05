@@ -3,8 +3,10 @@ import { dirname, resolve as resolvePath } from "node:path";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import { transform } from "oxc-transform";
+import inlineWasm from "./scripts/inline-wasm.mjs";
 
 const manifest = JSON.parse(readFileSync("package.json", "utf8"));
+const bundledCodecs = new Set(["fast-png", "jpeg-js", "@jsquash/webp", "fflate"]);
 const dependencies = Object.keys(manifest.dependencies ?? {});
 
 export default {
@@ -14,6 +16,7 @@ export default {
     { file: "dist/index.mjs", format: "esm", sourcemap: true },
   ],
   plugins: [
+    inlineWasm(),
     resolve({
       browser: manifest.name !== "@phash-js/server",
       preferBuiltins: manifest.name === "@phash-js/server",
@@ -38,5 +41,8 @@ export default {
   ],
   external: (id) =>
     id.startsWith("node:") ||
-    dependencies.some((dependency) => id === dependency || id.startsWith(`${dependency}/`)),
+    dependencies.some(
+      (dependency) =>
+        !bundledCodecs.has(dependency) && (id === dependency || id.startsWith(`${dependency}/`)),
+    ),
 };

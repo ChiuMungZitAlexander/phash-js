@@ -1,134 +1,96 @@
 # phash-js
 
-`phash-js` is a TypeScript library for generating perceptual hashes (pHash) of images, allowing efficient and fast image comparison. This library is ideal for checking if a user’s avatar is among existing images in your database, making it easy to quickly identify similar images based on their perceptual characteristics.
+A TypeScript library for generating 64-bit perceptual image hashes in browsers, Node.js, and Bun. Compare hashes with Hamming distance to find visually similar images.
 
-## Why pHash?
+## Install
 
-There are several popular image hashing techniques, including `aHash` (average hash), `dHash` (difference hash), and `pHash` (perceptual hash). While `aHash` and `dHash` are simpler, they may fail to detect subtle differences in more complex images. `pHash` is a more advanced algorithm that leverages perceptual hashing to capture the overall appearance of an image by focusing on features that human eyes are sensitive to. This makes it more robust for comparing images that may vary slightly due to scaling, cropping, or minor alterations.
-
-## Process
-
-![process](process.png "process")
-
-1. Reduce the image to 32\*32 pixels, taking into account both complexity and quality
-2. Grayscale image
-3. Apply DCT 2d
-4. It is the best way to binarize the whole 32\*32 pixels. But to make calculation efficient, we pick top-left 8\*8 pixels, which are with high frequencies.
-5. Calculate the average of the matrix, and then turn the pixel, of which the value greater than average, to 1, otherwise 0. Finally we will get such a binary string `1001100111000100010101000010010100000000001000111010001010000000`
-6. Convert binary to hex each 4 digits as a group. E.g., `1001` to `9`, `1100` to `c`. The phash of the original image will be `99c454250023a280`.
-
-## Discrete Cosine Transform (DCT)
-
-At the core of the `pHash` algorithm is the Discrete Cosine Transform (DCT), a mathematical operation that transforms an image into its frequency domain. By extracting and compressing frequency components, DCT enables `pHash` to create a unique, fixed-length hash representing the perceptual content of an image. This hash is resilient to small changes, making it effective for image comparison.
-
-##### DCT 1d
-
-![dct1d](dct1d.svg "dct1d")
-
-##### DCT 2d
-
-![dct2d](dct2d.svg "dct2d")
-
-## TypeScript Advantage
-
-Existing `pHash` libraries are primarily written in JavaScript, but `phash-js` is the first library built fully in TypeScript. This provides better type-checking, easier code maintenance, and improved developer experience, making it a great choice for modern TypeScript projects.
-
-## Examples
-
-### For node environments
-
-In node environment, `@phash-js/server` will use sharp to convert images to RGBA data.
-
-```bash
-npm install @phash-js/server
-# yarn install @phash-js/server
-# bun add @phash-js/server
+```sh
+bun add @phash-js/server
+# For browsers:
+bun add @phash-js/client
 ```
 
-```typescript
+The server and client packages use the same decoder and hashing pipeline. The same supported image bytes produce the same hash in both environments.
+
+## Server
+
+```ts
 import { phash, calcDistance } from "@phash-js/server";
 
-// To generate phash
-const hash1 = await phash("./image1.png");
-const hash2 = await phash("./image2.png");
-
-// To calculate the hamming distance
-const distance = calcDistance(hash1, hash2);
+const first = await phash("./first.png");
+const second = await phash("./second.png");
+const distance = calcDistance(first, second);
 ```
 
-### For browser environments
+`phash` accepts a local path, `Buffer`, `Uint8Array`, or `ArrayBuffer` and returns a promise for a 16-character hexadecimal hash. Invalid or unsupported images reject the promise.
 
-In node environment, `@phash-js/client` will use canvas to convert images to RGBA data.
+## Browser
 
-```bash
-npm install @phash-js/client
-# yarn install @phash-js/client
-# bun add @phash-js/client
-```
+```ts
+import { phash, calcDistance } from "@phash-js/client";
 
-```typescript
-const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
+const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
+input.addEventListener("change", async () => {
+  const file = input.files?.[0];
   if (file) {
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const _hash = await phash(file);
-      return _hash;
-    };
-    reader.readAsDataURL(file);
+    console.log(await phash(file));
   }
-};
+});
 ```
 
-### Use core module directly
+The client accepts a `File` or `Blob` and reads its bytes directly. Hashing does not use Canvas, `Image`, native browser resizing, or browser color management. WebP decoding uses an embedded WebAssembly decoder; no CDN or separately hosted WASM asset is needed.
 
-Both `@phash-js/server` and `@phash-js/client` rely on `@phash-js/core`. If you need to use core functions like DCT or normalize, import them from `@phash-js/core`.
+## Hash algorithm: phash-v2
 
-```bash
-npm install @phash-js/core
-# yarn install @phash-js/core
-# bun add @phash-js/core
+Both packages delegate image processing to `@phash-js/core`:
+
+1. Detect the file format from its bytes and decode with the same PNG, JPEG, or WebP implementation in every environment.
+2. Apply EXIF orientation and composite transparency onto a white background. Hash the encoded RGB samples without applying ICC profiles or PNG gamma metadata.
+3. Convert to HSP perceived brightness using `sqrt(0.299 * R² + 0.587 * G² + 0.114 * B²)`, rounded down, and use deterministic area resampling to stretch the image to 32 × 32. Alpha compositing and area resampling round to the nearest integer. HSP uses the Rec.601 weights, but its squared-channel formula is distinct from Rec.601 luma. Integer arithmetic and a fixed 32-point DCT cosine table avoid differences in native interpolation or runtime transcendental functions.
+4. Apply the two-dimensional DCT, retain the top-left 8 × 8 low-frequency coefficients, and compare each coefficient with the mean of those 64 coefficients, including DC. Values at or above the mean become `1`; the others become `0`.
+5. Encode the 64 bits as 16 hexadecimal characters.
+
+PNG, JPEG, and static WebP are supported, with a 100-megapixel limit per image. Animated PNG/WebP and other image formats are rejected rather than falling back to an environment-specific decoder. File extension and MIME type do not select the decoding algorithm. Images above the shared 100-megapixel limit are rejected before pixel allocation.
+
+Hashes describe visual similarity rather than file identity. A distance of `0` means the hashes match; larger distances mean more selected bits differ. Choose a similarity threshold using representative images from your application.
+
+## Migrating from version 1
+
+Version 1 used Sharp on the server and Canvas in the browser. Their grayscale conversion, resampling, and aspect-ratio handling differed, producing different hashes for the same file. Version 2 replaces these paths with shared byte decoding and preprocessing.
+
+**Version 2 hashes are incompatible with stored version 1 hashes.** Regenerate existing hashes from the original images and store the algorithm identifier `phash-v2` alongside them. Compare hashes generated by the same algorithm version and keep the server/client package versions aligned. The 16-character hash itself does not carry a version prefix.
+
+`HASH_PROFILE`, exported by all three packages, contains this algorithm identifier.
+
+The repository's `packages/server/images/lenna.png` produces `99c4142500238280` with `phash-v2` in both packages.
+
+The server now rejects invalid inputs instead of logging an error and returning `undefined`. Non-square images are stretched consistently, transparent pixels use a white background, and supported file formats are explicit.
+
+## Core utilities
+
+```ts
+import { dct1d, dct2d, cropDct2d, binarize, normalize, calcDistance } from "@phash-js/core";
 ```
 
-```typescript
-import { /* dct1d */, dct2d, /* binarize */, normalize } from "@phash-js/core";
-import sharp from "sharp";
-
-// Do the dct2d for a image
-const matrix = await dct2d(matrix as number[][]);
-
-// As the value can be larger than 255 or negative after DCT, normalize the matrix to make it greyscale.
-const normalizedMatrix = normalize(matrix);
-
-const height = normalizedMatrix.length;
-const width = normalizedMatrix[0].length;
-const flatData = Uint8Array.from(normalizedMatrix.flat());
-
-// Save the new image after DCT to local
-await sharp(flatData, {
-  raw: {
-    width: width,
-    height: height,
-    channels: 1, // Single channel for grayscale
-  },
-}).toFormat("png").toFile('./image.png');
-```
-
-## Known Issues
-
-1. Hash by `@phash-js/server` and `@phash-js/clinet` will be a little different as sharp and canvas have various conversion algorithms. For the example of Lenna.png, `@phash-js/server` will return `99c454250023a280`, while `@phash-js/client` will return `99c4542540238280`. Therefore, it's not supported to mix `@phash-js/server` and `@phash-js/client`.
+The core package also provides the shared preprocessing and byte-hashing pipeline used by both wrappers. See its TypeScript declarations for the full API.
 
 ## Development
 
-Use Bun 1.4.4 or newer and Node.js 22.12 or newer. Install dependencies from the workspace root with `bun install --frozen-lockfile`.
+Use the Bun version pinned in `package.json`. Node.js 22.12 or newer is also required by the development tools.
 
 ```sh
+bun install --frozen-lockfile
 bun run build
-bun run build:example
-bun run check
 bun run test
+bun run test:package
+bun run typecheck
+bun run lint
+bun run format:check
+bun run build:example
 ```
 
-Commits use Conventional Commits, for example `fix(core): handle invalid images`. Husky runs Oxlint and Oxfmt before each commit and commitlint validates the commit message. Use `bun run format` and `bun run lint:fix` to apply fixes.
+`bun run format` applies Oxfmt formatting. Oxlint checks code correctness and style. Husky runs the configured checks before commits, and commitlint enforces Conventional Commits, for example:
 
-`bun run deps:check` compares every direct dependency with the npm latest stable release; `bun run deps:update` updates the manifests, then run `bun install` to refresh `bun.lock`.
+```text
+fix(core): make image hashes deterministic across runtimes
+```
