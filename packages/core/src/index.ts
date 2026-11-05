@@ -1,17 +1,4 @@
-import {
-  sqrt,
-  sum,
-  cos,
-  pi,
-  round,
-  transpose,
-  subset,
-  index,
-  range,
-  mean,
-  min,
-  max,
-} from "mathjs";
+import { sqrt, sum, cos, pi, round, transpose, subset, index, range, mean, min, max } from "mathjs";
 
 // Before DCT, the image should be reduced in size. Usually 32*32 is an ideal size.
 export const DEFAULT_REDUCED_SIZE = 32;
@@ -33,11 +20,9 @@ const DEFAULT_SAMPLING_SIZE = 8;
 export const dct1d = (sequence: number[], precision = 8) => {
   const n = sequence.length;
 
-  const result = sequence.map((k, i) => {
+  const result = sequence.map((_, i) => {
     const sigma = sum(
-      i === 0
-        ? sequence
-        : sequence.map((_k, _i) => _k * cos((pi / n) * (_i + 1 / 2) * i))
+      i === 0 ? sequence : sequence.map((_k, _i) => _k * cos((pi / n) * (_i + 1 / 2) * i)),
     );
     const multiplier = sqrt((i === 0 ? 1 : 2) / n) as number;
 
@@ -97,9 +82,7 @@ export const normalize = (matrix: number[][]): number[][] => {
   const minVal = min(matrix.flat());
   const maxVal = max(matrix.flat());
 
-  return matrix.map((row) =>
-    row.map((value) => ((value - minVal) / (maxVal - minVal)) * 255)
-  );
+  return matrix.map((row) => row.map((value) => ((value - minVal) / (maxVal - minVal)) * 255));
 };
 
 /**
@@ -138,8 +121,6 @@ export const calcDistance = (a: string, b: string): number => {
 function phashToBin(phash: string) {
   return phash
     .split("")
-    .map((_hex) =>
-      Number(`0x${_hex}`).toString(2).padStart(BIN_GROUP_SIZE, "0")
-    )
+    .map((_hex) => Number(`0x${_hex}`).toString(2).padStart(BIN_GROUP_SIZE, "0"))
     .join("");
 }

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { phash } from "@phash-js/client/src/index";
+import { useState, type ChangeEvent } from "react";
+import { phash } from "@phash-js/client";
 
 const App = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -7,7 +7,7 @@ const App = () => {
   const [hash, setHash] = useState("");
 
   // Handle image selection
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
@@ -38,11 +38,7 @@ const App = () => {
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <input type="file" accept="image/*" onChange={handleImageChange} />
       {preview && (
-        <img
-          src={preview as string}
-          alt="Preview"
-          style={{ width: "200px", margin: "10px" }}
-        />
+        <img src={preview as string} alt="Preview" style={{ width: "200px", margin: "10px" }} />
       )}
       <button
         onClick={handlePhash}
